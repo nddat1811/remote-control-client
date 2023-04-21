@@ -22,6 +22,22 @@ SCOPES = [
     'https://www.googleapis.com/auth/gmail.readonly',
 ]
 
+def authorization():
+    creds = ""
+    if os.path.exists('token.json'):
+        creds = Credentials.from_authorized_user_file('token.json', SCOPES)
+    # If there are no (valid) credentials available, let the user log in.
+    if not creds or not creds.valid:
+        if creds and creds.expired and creds.refresh_token:
+            creds.refresh(Request())
+        else:
+            path = os.path.abspath('credentials.json')
+            flow = InstalledAppFlow.from_client_secrets_file(
+                path, SCOPES)
+            creds = flow.run_local_server(port=0)
+        # Save the credentials for the next runserver\credentials.json
+        with open('token.json', 'w') as token:
+            token.write(creds.to_json())
 def send_mail(package):
     if os.path.exists('token.json'):
         creds = Credentials.from_authorized_user_file('token.json', SCOPES)

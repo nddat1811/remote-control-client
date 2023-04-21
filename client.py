@@ -33,6 +33,7 @@ def disconnect():
     return
 # 1 Xem địa chỉ MAC (MAC Address)
 def mac_address():
+    g.send_mail("MAC")
     mac.mac_address()
     return
 # 2 Lắng nghe phím (Keylogger)
@@ -98,6 +99,7 @@ def show_main_ui():
 
 
 def connect():
+    g.authorization()
     show_main_ui()
     # try:
     #     tk.messagebox.showinfo(message = "Connect successfully!")
