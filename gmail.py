@@ -147,6 +147,11 @@ def get_info_message(message):
 def mark_as_read(service, m):
     service.users().messages().modify(userId='me', id=m['id'], body={'removeLabelIds': ['UNREAD']}).execute()
     return
+def split_messages(letter):
+    tmp = letter.split(":")
+    cmd = tmp[0]
+    data = tmp[1]
+    return cmd, data
 
 # https://skillshats.com/blogs/send-and-read-emails-with-gmail-api/ link có hết
 #https://www.youtube.com/watch?v=HNtPG5ltFf8

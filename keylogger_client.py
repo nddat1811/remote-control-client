@@ -31,10 +31,8 @@ def _print( textbox):
     while True:
         letter = g.read_mail()
         if letter != "no":
-            tmp = letter.split(":")
-            cmd = tmp[0]
+            cmd, data = g.split_messages(letter)
             if cmd == "key_print":
-                data = tmp[1]
                 print("key_print:", data)
                 textbox.config(state = "normal")
                 textbox.insert(tk.END, data)
