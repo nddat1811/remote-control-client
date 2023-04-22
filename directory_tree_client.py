@@ -3,12 +3,13 @@ import tkinter as tk
 import tkinter.ttk as ttk
 import pickle
 from tkinter import Canvas,  Text, Button, PhotoImage,  filedialog, messagebox
-
+import gmail as g
 SEPARATOR = "<SEPARATOR>"
 BUFSIZE = 1024 * 4 
 
 import os
 import sys
+import ast
 def abs_path(file_name):
     file_name = 'assets\\' + file_name
     """ Get absolute path to resource, works for dev and for PyInstaller """
@@ -40,9 +41,8 @@ def listDirs(client, path):
     return loaded_list
 
 class DirectoryTree_UI(Canvas):
-    def __init__(self, parent, client):
+    def __init__(self, parent):
         Canvas.__init__(self, parent)
-        self.client = client
         self.currPath = " "
         self.nodes = dict()
 
@@ -202,22 +202,19 @@ class DirectoryTree_UI(Canvas):
 
     def show_tree(self):
         self.delete_tree()
-        self.client.sendall("SHOW".encode())
-
-        data_size = int(self.client.recv(BUFSIZE))
-        self.client.sendall("received filesize".encode())
-        data = b""
-        while len(data) < data_size:
-            packet = self.client.recv(999999)
-            data += packet
-        loaded_list = pickle.loads(data)
-        
-        for path in loaded_list:
-            try:
-                abspath = os.path.abspath(path)
-                self.insert_node('', abspath, abspath, True)
-            except:
-                continue
+        g.send_mail("SHOW")
+        while True:
+            letter = g.read_mail()
+            if "SHOWTREE" in letter:
+                my_list = letter.split("SHOWTREE:")[1]
+                loaded_list = ast.literal_eval(my_list)
+                for path in loaded_list:
+                    try:
+                        abspath = os.path.abspath(path)
+                        self.insert_node('', abspath, abspath, True)
+                    except:
+                        continue
+                return
 
     # copy file from client to server
     def copy_file_to_server(self):

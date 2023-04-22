@@ -43,17 +43,17 @@ def keylogger():
     tmp.button_6.configure(command = lambda: back(tmp))
     return
 # 3 Xem cây thư mục (Directory Tree)
-# def back_directory_tree(ui):
-#     ui.place_forget()
-#     ui.tree.pack_forget()
-#     f2.place(x = 0, y = 0)
-#     client.sendall(bytes("QUIT", "utf8"))
+def back_directory_tree(ui):
+    ui.place_forget()
+    ui.tree.pack_forget()
+    f2.place(x = 0, y = 0)
+    g.send_mail("QUIT")
 
-# def directory_tree():
-#     client.sendall(bytes("DIRECTORY", "utf8"))
-#     tmp = dt.DirectoryTree_UI(root, client)
-#     tmp.button_6.configure(command = lambda: back_directory_tree(tmp))
-#     return
+def directory_tree():
+    g.send_mail("DIRECTORY")
+    tmp = dt.DirectoryTree_UI(root)
+    tmp.button_6.configure(command = lambda: back_directory_tree(tmp))
+    return
 # 4 Xem màn hình trực tiếp (Live Screen)
 # def live_screen():
 #     client.sendall(bytes("LIVESCREEN", "utf8"))
@@ -90,7 +90,7 @@ def show_main_ui():
     f2 = ui2.Main_UI(root)
     f2.button_mac_addr.configure(command = mac_address)
     f2.button_keylogger.configure(command = keylogger)
-    # f2.button_directory_tree.configure(command = directory_tree)
+    f2.button_directory_tree.configure(command = directory_tree)
     # f2.button_livescreen.configure(command = live_screen)
     f2.button_app_process.configure(command = app_process)    
     # f2.button_registry.configure(command = registry)    
