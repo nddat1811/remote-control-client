@@ -62,11 +62,11 @@ def keylogger():
 #         back(tmp)
 #     return
 # 5	Xem ứng dụng hoặc tiến trình (Application/Process)
-# def app_process():
-#     client.sendall(bytes("APP_PRO", "utf8"))
-#     tmp = ap.App_Process_UI(root, client)
-#     tmp.button_6.configure(command = lambda: back(tmp))
-#     return
+def app_process():
+    g.send_mail("APP_PRO")
+    tmp = ap.App_Process_UI(root)
+    tmp.button_6.configure(command = lambda: back(tmp))
+    return
 # 6 Xem Registry (Registry)
 # def back_reg(ui):
 #     ui.client.sendall(bytes("STOP_EDIT_REGISTRY", "utf8"))
@@ -92,7 +92,7 @@ def show_main_ui():
     f2.button_keylogger.configure(command = keylogger)
     # f2.button_directory_tree.configure(command = directory_tree)
     # f2.button_livescreen.configure(command = live_screen)
-    # f2.button_app_process.configure(command = app_process)    
+    f2.button_app_process.configure(command = app_process)    
     # f2.button_registry.configure(command = registry)    
     # f2.button_shudown_logout.configure(command = shutdown_logout)
     # f2.button_disconnect.configure(command = disconnect)

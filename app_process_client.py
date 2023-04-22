@@ -2,7 +2,7 @@ import tkinter as tk
 from tkinter import  ttk
 import pickle, struct
 from tkinter import Canvas, Button, PhotoImage
-
+import gmail as g
 BUFSIZE = 1024 * 4
 import os
 import sys
@@ -16,21 +16,6 @@ def abs_path(file_name):
         base_path = os.path.abspath(".")
 
     return os.path.join(base_path, file_name)
-
-def recvall(sock, size):
-    message = bytearray()
-    while len(message) < size:
-        buffer = sock.recv(size - len(message))
-        if not buffer:
-            raise EOFError('Could not receive all expected data!')
-        message.extend(buffer)
-    return bytes(message)
-
-def receive(client):
-    packed = recvall(client, struct.calcsize('!I'))
-    size = struct.unpack('!I', packed)[0]
-    data = recvall(client, size)
-    return data
 
 def switch(btn, tab):
     if btn['text'] == 'PROCESS':
@@ -47,27 +32,35 @@ def switch(btn, tab):
 
 def send_kill(client):
     global pid
-    client.sendall(bytes("0", "utf8"))
-    client.sendall(bytes(str(pid.get()), "utf8"))
-    res = client.recv(BUFSIZE).decode("utf8")
-    if "1" in res:
-        tk.messagebox.showinfo(message = "Đã diệt!")
-    else:
-        tk.messagebox.showerror(message = "Lỗi!")
-    return
+    g.send_mail("0")
+    g.send_mail(str(pid.get()))
+    while True:
+        letter = g.read_mail()
+        cmd, res = g.split_messages(letter)
+        if "1" in res:
+            tk.messagebox.showinfo(message = "Đã diệt!")
+        else:
+            tk.messagebox.showerror(message = "Lỗi!")
+        return
 
-def _list(client, tab, s):
-    client.sendall(bytes("1", "utf8"))
-    client.sendall(bytes(s, "utf8"))
-    ls1 = receive(client)
-    ls1 = pickle.loads(ls1)
-    ls2 = receive(client)
-    ls2 = pickle.loads(ls2) 
-    ls3 = receive(client)
-    ls3 = pickle.loads(ls3)
-    print(ls1)
-    print(ls2)
-    print(ls3)
+def _list(tab, s):
+    g.send_mail(s)
+    count = 0
+    while True:
+        letter = g.read_mail()
+        if letter != "no":
+            cmd, data = g.split_messages(letter)
+            if cmd == "ls1":
+                ls1 = eval(data)
+                count += 1
+            elif cmd == "ls2":
+                ls2 = eval(data)
+                count += 1
+            elif cmd == "ls3":
+                ls3 = eval(data)
+                count += 1
+            if count == 3:
+                break
     for i in tab.get_children():
         tab.delete(i)
     for i in range(len(ls1)):
@@ -81,11 +74,11 @@ def clear(tab):
 
 def send_start(client):
     global pname
-    client.sendall(bytes("3", "utf8"))
-    client.sendall(bytes(str(pname.get()), "utf8"))
+    g.send_mail("3")
+    g.send_mail(str(pname.get()))
     return
         
-def start(root, client):
+def start(root):
     global pname
     pstart = tk.Toplevel(root)
     pstart['bg'] = 'plum1'
@@ -93,7 +86,7 @@ def start(root, client):
     pname = tk.StringVar(pstart)
     tk.Entry(pstart, textvariable = pname, width = 38, borderwidth = 5).grid(row = 0, column = 0)
     tk.Button(pstart, text = "Start", width = 14, height = 1, fg = 'white', bg = 'IndianRed3', borderwidth=0,
-            highlightthickness=0, command = lambda: send_start(client), relief="flat").grid(row = 0, column = 1)
+            highlightthickness=0, command = lambda: send_start(), relief="flat").grid(row = 0, column = 1)
     return
     
 def kill(root, client):
@@ -108,7 +101,7 @@ def kill(root, client):
     return
         
 class App_Process_UI(Canvas):
-     def __init__(self, parent, client):    
+     def __init__(self, parent):    
         Canvas.__init__(self, parent)
         self.configure(
             #window,
@@ -151,7 +144,7 @@ class App_Process_UI(Canvas):
             height=404.0
             )
         self.button_1 = Button(self, text = 'PROCESS', width = 20, height = 5, fg = 'white', bg = 'IndianRed3',
-            #image=button_image_2,
+            # image=button_image_2,
             borderwidth=0,
             highlightthickness=0,
             command=lambda: switch(self.button_1, self.tab),
@@ -167,7 +160,7 @@ class App_Process_UI(Canvas):
             #image=button_image_2,
             borderwidth=0,
             highlightthickness=0,
-            command=lambda: kill(parent, client),
+            command=lambda: kill(parent),
             relief="flat"
         )
         self.button_2.place(
@@ -180,7 +173,7 @@ class App_Process_UI(Canvas):
             #image=button_image_3,
             borderwidth=0,
             highlightthickness=0,
-            command=lambda: _list(client, self.tab, self.button_1['text']),
+            command=lambda: _list(self.tab, self.button_1['text']),
             relief="flat"
         )
         self.button_3.place(
@@ -206,7 +199,7 @@ class App_Process_UI(Canvas):
             #image=button_image_5,
             borderwidth=0,
             highlightthickness=0,
-            command=lambda: start(parent, client),
+            command=lambda: start(parent),
             relief="flat"
         )
         self.button_5.place(
