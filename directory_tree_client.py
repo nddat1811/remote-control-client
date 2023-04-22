@@ -21,24 +21,18 @@ def abs_path(file_name):
 
     return os.path.join(base_path, file_name)
 
-def listDirs(client, path):
-    client.sendall(path.encode())
+def listDirs(path):
+    g.send_mail("PATH:"+ str(path))
+    while True:
+        letter = g.read_mail()
+        if "LIST_DIR" in letter:
+            my_list = letter.split("LIST_DIR:")[1]
+            loaded_list = ast.literal_eval(my_list)
+            return loaded_list
+        elif "error" in letter:
+            messagebox.showerror(message = "Cannot open this directory!")
+            return []
 
-    data_size = int(client.recv(BUFSIZE))
-    if (data_size == -1):
-        messagebox.showerror(message = "Click SHOW button again to watch the new directory tree!")
-        return []
-    client.sendall("received filesize".encode())
-    data = b""
-    while len(data) < data_size:
-        packet = client.recv(999999)
-        data += packet
-    if (data == "error"):
-        messagebox.showerror(message = "Cannot open this directory!")
-        return []
-    
-    loaded_list = pickle.loads(data)
-    return loaded_list
 
 class DirectoryTree_UI(Canvas):
     def __init__(self, parent):
@@ -172,7 +166,7 @@ class DirectoryTree_UI(Canvas):
         if abspath:
             self.tree.delete(self.tree.get_children(node))
             try:
-                dirs = listDirs(self.client, abspath)
+                dirs = listDirs(abspath)
                 for p in dirs:
                     self.insert_node(node, p[0], os.path.join(abspath, p[0]), p[1])
             except:
@@ -276,17 +270,22 @@ class DirectoryTree_UI(Canvas):
             messagebox.showerror(message = "Cannot copy!") 
 
     def delete_file(self):
-        self.client.sendall("DEL".encode())
-        isOk = self.client.recv(BUFSIZE).decode()
-        if (isOk == "OK"):
-            self.client.sendall(self.currPath.encode())
-            res = self.client.recv(BUFSIZE).decode()
-            if (res == "ok"):
-                messagebox.showinfo(message = "Delete successfully!")
-            else:
-                messagebox.showerror(message = "Cannot delete!") 
-        else: 
-            messagebox.showerror(message = "Cannot delete!")  
+        g.send_mail("XOAFILE")
+        while True:
+            isOk = g.read_mail()
+            if "OK" in isOk:
+                g.send_mail("DELFILE:"+self.currPath)
+                while True:
+                    res = g.read_mail()
+                    if "SUCCESS" in res:
+                        messagebox.showinfo(message = "Delete successfully!")
+                        return
+                    elif "error" in res:
+                        messagebox.showerror(message = "Cannot delete!")
+                        return
+            elif "error" in isOk:
+                messagebox.showerror(message = "Cannot delete!")  
+                return  
 
     def back(self):
         return
