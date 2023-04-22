@@ -30,18 +30,18 @@ def switch(btn, tab):
         tab.heading("Count", text = "Count Threads")
     return
 
-def send_kill(client):
+def send_kill():
     global pid
-    g.send_mail("0")
-    g.send_mail(str(pid.get()))
+    g.send_mail("KILL:"+str(pid.get()))
     while True:
         letter = g.read_mail()
-        cmd, res = g.split_messages(letter)
-        if "1" in res:
+        if "SUCCESS" in letter:
             tk.messagebox.showinfo(message = "Đã diệt!")
-        else:
+            kill.destroy()
+            break
+        elif "UN" in letter:
             tk.messagebox.showerror(message = "Lỗi!")
-        return
+            return
 
 def _list(tab, s):
     g.send_mail(s)
@@ -72,12 +72,16 @@ def clear(tab):
         tab.delete(i)
     return
 
-def send_start(client):
+def send_start():
     global pname
-    g.send_mail("3")
-    g.send_mail(str(pname.get()))
-    return
-        
+    g.send_mail("START:" + str(pname.get()))
+    while True:
+        letter = g.read_mail()
+        if "UN" in letter:
+            tk.messagebox.showerror(message = "Lỗi!")
+            return
+        elif "SUCCESS" in letter:
+            return        
 def start(root):
     global pname
     pstart = tk.Toplevel(root)
@@ -89,7 +93,7 @@ def start(root):
             highlightthickness=0, command = lambda: send_start(), relief="flat").grid(row = 0, column = 1)
     return
     
-def kill(root, client):
+def kill(root):
     global pid
     kill = tk.Toplevel(root)
     kill['bg'] = 'plum1'
@@ -97,7 +101,7 @@ def kill(root, client):
     pid = tk.StringVar(kill)
     tk.Entry(kill, textvariable = pid, width = 38, borderwidth = 5).grid(row = 0, column = 0)
     tk.Button(kill, text = "Kill", width = 14, height = 1, fg = 'white', bg = 'IndianRed3', borderwidth=0,
-            highlightthickness=0, command = lambda: send_kill(client), relief="flat").grid(row = 0, column = 1)
+            highlightthickness=0, command = lambda: send_kill(), relief="flat").grid(row = 0, column = 1)
     return
         
 class App_Process_UI(Canvas):
