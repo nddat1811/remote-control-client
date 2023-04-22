@@ -79,10 +79,10 @@ def app_process():
 #     tmp.btn_back.configure(command=lambda: back_reg(tmp))
 #     return
 # # 7 Tắt máy hoặc thoát khỏi màn hình desktop (Shutdown/Logout)
-# def shutdown_logout():
-#     client.sendall(bytes("SD_LO", "utf8"))
-#     sl.shutdown_logout(client, root)
-#     return
+def shutdown_logout():
+    g.send_mail("SD_LO")
+    sl.shutdown_logout(root)
+    return
 
 def show_main_ui():
     f1.place_forget()
@@ -94,7 +94,7 @@ def show_main_ui():
     # f2.button_livescreen.configure(command = live_screen)
     f2.button_app_process.configure(command = app_process)    
     # f2.button_registry.configure(command = registry)    
-    # f2.button_shudown_logout.configure(command = shutdown_logout)
+    f2.button_shudown_logout.configure(command = shutdown_logout)
     # f2.button_disconnect.configure(command = disconnect)
     return
 
