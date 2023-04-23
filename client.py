@@ -68,16 +68,15 @@ def app_process():
     tmp.button_6.configure(command = lambda: back(tmp))
     return
 # 6 Xem Registry (Registry)
-# def back_reg(ui):
-#     ui.client.sendall(bytes("STOP_EDIT_REGISTRY", "utf8"))
-#     ui.place_forget()
-#     f2.place(x = 0, y = 0)
+def back_reg(ui):
+    ui.place_forget()
+    f2.place(x = 0, y = 0)
 
-# def registry():
-#     client.sendall(bytes("REGISTRY", "utf8"))
-#     tmp = rc.Registry_UI(root, client)
-#     tmp.btn_back.configure(command=lambda: back_reg(tmp))
-#     return
+def registry():
+    g.send_mail("REGISTRY")
+    tmp = rc.Registry_UI(root)
+    tmp.btn_back.configure(command=lambda: back_reg(tmp))
+    return
 # # 7 Tắt máy hoặc thoát khỏi màn hình desktop (Shutdown/Logout)
 def shutdown_logout():
     g.send_mail("SD_LO")
@@ -93,7 +92,7 @@ def show_main_ui():
     f2.button_directory_tree.configure(command = directory_tree)
     # f2.button_livescreen.configure(command = live_screen)
     f2.button_app_process.configure(command = app_process)    
-    # f2.button_registry.configure(command = registry)    
+    f2.button_registry.configure(command = registry)    
     f2.button_shudown_logout.configure(command = shutdown_logout)
     # f2.button_disconnect.configure(command = disconnect)
     return

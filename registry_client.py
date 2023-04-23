@@ -4,12 +4,14 @@ import json
 import tkinter as tk
 from tkinter import Canvas, filedialog
 from tkinter.filedialog import asksaveasfile
+import gmail as g
+import ast
 
 
 
 BUFSIZE = 32768
 class Registry_UI(Canvas):
-    def __init__(self, parent, client):    
+    def __init__(self, parent):    
         Canvas.__init__(self, parent)
         self.configure(
             #window,
@@ -22,7 +24,6 @@ class Registry_UI(Canvas):
         )
         self.place(x = 0, y = 0)
         # copy socket connection to own attribute
-        self.client = client
         # attributes of registry keys/values
         self.action_ID = None
         self.key = None
@@ -173,26 +174,33 @@ class Registry_UI(Canvas):
     def send_msg(self):        
         msg = {'ID' : self.action_ID, 'path' : self.key, 'name_value' : self.name, 'value' : self.data, 'v_type' : self.data_type}
         msg = json.dumps(msg)
-        msg_bytes = bytes(msg, 'utf8')
-        msg_sz = str(len(msg_bytes))
-        self.client.sendall(bytes(msg_sz, 'utf8'))
-        self.client.sendall(msg_bytes)
-        self.res1 = self.client.recv(BUFSIZE).decode('utf8')
-        self.res2 = self.client.recv(BUFSIZE).decode('utf8')
-        if self.action_ID == 1:
-            if '0' in self.res1:
-                 tk.messagebox.showerror(title='Thông báo', message='Thao tác không hợp lệ')
-            else:
-                 tk.messagebox.showinfo(title='Thông báo', message=self.res2)
-        else:
-            if '0' in self.res1:
-                 tk.messagebox.showerror(title='Thông báo', message='Thao tác không hợp lệ')
-            else:
-                 tk.messagebox.showinfo(title='Thông báo', message='Thành công')
+        g.send_mail("REGISTRY_CMD:"+msg)
+        while True:
+            letter = g.read_mail()
+            if "REGISTRY_RESULT" in letter:
+                _, result = g.split_messages(letter)
+                arr = ast.literal_eval(result)
+                self.res1 = arr[0]
+                self.res2 = arr[1]
+                if self.action_ID == 1:
+                    if '0' in self.res1:
+                        tk.messagebox.showerror(title='Thông báo', message='Thao tác không hợp lệ')
+                        return
+                    else:
+                        tk.messagebox.showinfo(title='Thông báo', message=self.res2)
+                        return
+                else:
+                    if '0' in self.res1:
+                        tk.messagebox.showerror(title='Thông báo', message='Thao tác không hợp lệ')
+                        return
+                    else:
+                        tk.messagebox.showinfo(title='Thông báo', message='Thành công')
+                        return
 
     def click_back(self):
         self.status = False
-        self.client.sendall(bytes("STOP_EDIT_REGISTRY", "utf8"))
+        g.send_mail("STOP_EDIT_REGISTRY")
+        # self.client.sendall(bytes("STOP_EDIT_REGISTRY", "utf8"))
         return
 
 
