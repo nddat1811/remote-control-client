@@ -241,33 +241,40 @@ class DirectoryTree_UI(Canvas):
 
     # copy file from server to client
     def copy_file_to_client(self):
-        self.client.sendall("COPY".encode())
-        isOk = self.client.recv(BUFSIZE).decode()
-        if (isOk == "OK"):
-            try:
-                destPath = filedialog.askdirectory()
-                if destPath == None or destPath == "":
-                    self.client.sendall("-1".encode())
-                    temp = self.client.recv(BUFSIZE)
-                    return 
-                self.client.sendall(self.currPath.encode())
-                filename = os.path.basename(self.currPath)
-                filesize = int(self.client.recv(100))
-                if (filesize == -1):
-                    messagebox.showerror(message = "Cannot copy!")  
-                    return
-                self.client.sendall("received filesize".encode())
-                data = b""
-                while len(data) < filesize:
-                    packet = self.client.recv(999999)
-                    data += packet
-                with open(destPath + "\\" + filename, "wb") as f:
-                    f.write(data)
-                messagebox.showinfo(message = "Copy successfully!")
-            except:
+        g.send_mail("COPY")
+        while True:
+            isOk = g.read_mail()
+            if "OK" in isOk:
+                try:
+                    destPath = filedialog.askdirectory()
+                    if destPath == None or destPath == "":
+                        g.send_mail("FILENAME:" + destPath)
+                        # temp = self.client.recv(BUFSIZE)  #nhan like not ok lam gi ?
+                        return 
+                    g.send_mail("FILENAME:" + self.currPath)
+                    filename = os.path.basename(self.currPath)
+                    while True:
+                        data = ""
+                        letter = g.read_mail()
+                        
+                        if "FILEDATA" in letter:
+                            res = letter.split("FILEDATA:")[1]
+                            if "b" in res:
+                                data = res[2:-1].encode()
+                            with open(destPath + "\\" + filename, "wb") as f:
+                                f.write(data)
+                            messagebox.showinfo(message = "Copy successfully!")
+                            return
+                        elif "NOTOK" in letter:
+                            messagebox.showerror(message = "Cannot copy!")
+                            return 
+                except:
+                    messagebox.showerror(message = "Cannot copy!")
+                    return  
+            elif "error" in isOk:
                 messagebox.showerror(message = "Cannot copy!")  
-        else:
-            messagebox.showerror(message = "Cannot copy!") 
+                return  
+
 
     def delete_file(self):
         g.send_mail("XOAFILE")
