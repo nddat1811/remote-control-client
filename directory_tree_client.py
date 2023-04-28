@@ -248,21 +248,12 @@ class DirectoryTree_UI(Canvas):
                 try:
                     destPath = filedialog.askdirectory()
                     if destPath == None or destPath == "":
-                        g.send_mail("FILENAME:" + destPath)
-                        # temp = self.client.recv(BUFSIZE)  #nhan like not ok lam gi ?
                         return 
                     g.send_mail("FILENAME:" + self.currPath)
                     filename = os.path.basename(self.currPath)
                     while True:
-                        data = ""
-                        letter = g.read_mail()
-                        
+                        letter = g.get_mail_with_attachment(destPath+"\\" +filename)
                         if "FILEDATA" in letter:
-                            res = letter.split("FILEDATA:")[1]
-                            if "b" in res:
-                                data = res[2:-1].encode()
-                            with open(destPath + "\\" + filename, "wb") as f:
-                                f.write(data)
                             messagebox.showinfo(message = "Copy successfully!")
                             return
                         elif "NOTOK" in letter:

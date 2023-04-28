@@ -101,7 +101,7 @@ def get_info_message(message):
                 t = part.get_payload()
     elif message_main_type == 'text':
         t = mime_msg.get_payload()
-    print("\n",t)
+    # print("\n",t)
     return t
 
 
@@ -152,6 +152,18 @@ def get_mail_with_attachment(path):
                             f.close()
                     #xoá thư
                     service.users().messages().delete(userId='me', id=m['id']).execute()
+                elif "FILEDATA" in res:
+                    message = service.users().messages().get(userId='me', id=m['id']).execute()
+                    for part in message['payload']['parts']:
+                        if(part['filename'] and part['body'] and part['body']['attachmentId']):
+                            attachment = service.users().messages().attachments().get(id=part['body']['attachmentId'], userId='me', messageId=m['id']).execute()
+
+                            file_data = base64.urlsafe_b64decode(attachment['data'].encode('utf-8'))
+                            desPath = path
+                            f = open(desPath, 'wb')
+                            f.write(file_data)
+                            f.close()
+
                 return res
 
     except HttpError as error:
