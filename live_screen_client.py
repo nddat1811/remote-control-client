@@ -1,4 +1,6 @@
 # Socket
+import os
+import shutil
 import socket
 
 # Thread
@@ -11,14 +13,15 @@ import io
 # Tkinter
 import tkinter as tk
 from tkinter import Canvas
-from tkinter.filedialog import asksaveasfile
+from tkinter.filedialog import asksaveasfilename
+import gmail as g
 
 
 
 BUFSIZE = 1024 * 4
 
 class Desktop_UI(Canvas):
-    def __init__(self, parent, client):    
+    def __init__(self, parent, ):    
         Canvas.__init__(self, parent)
         self.configure(
             #window,
@@ -30,9 +33,6 @@ class Desktop_UI(Canvas):
             relief = "ridge"
         )
         self.place(x = 0, y = 0)
-
-        # copy socket connection to own attribute
-        self.client = client
 
         # initialize status to ready receiving data
         self.status = True
@@ -58,32 +58,24 @@ class Desktop_UI(Canvas):
     
     # display frames continously
     def ChangeImage(self):
-        while self.status:            
-            sz = int(self.client.recv(100))
-            #self.client.sendall(bytes("READY", "utf8"))
-
-            data = b""
-            while len(data) < sz:
-                packet = self.client.recv(999999)
-                data += packet
-
-            img_PIL = Image.open(io.BytesIO(data)).resize((960, 540), Image.ANTIALIAS)
-            img_tk = ImageTk.PhotoImage(img_PIL)
-            self.label.configure(image=img_tk)
-            self.label.image = img_tk
+        while self.status:  
+            letter = g.get_msg_with_attachment()
+            if letter is not None and "LIVESCREEN" in letter:
+                path = os.path.join(os.path.dirname(__file__), "livescreen", "livescreen.png")
+                img_PIL = Image.open(path).resize((960, 540), Image.ANTIALIAS)
+                img_tk = ImageTk.PhotoImage(img_PIL)
+                self.label.configure(image=img_tk)
+                self.label.image = img_tk
 
             # check save image command
             # while saving image, server will delay capturing and wait for the next command from client
             if self.on_save:
-                self.frame = data
                 self.save_img()
                 self.on_save = False
 
             # check stop command
-            if self.status:
-                self.client.sendall(bytes("NEXT_FRAME", "utf8"))
-            else:
-                self.client.sendall(bytes("STOP_RECEIVING", "utf8"))
+            if self.status != True:
+                g.send_mail("LIVSCREEN:STOP_RECEIVING")
         # Return the main UI
         self.place_forget()
 
@@ -94,13 +86,11 @@ class Desktop_UI(Canvas):
         self.on_save = True
 
     def save_img(self):
-        if self.frame == None:
+        source_path = os.path.join(os.path.dirname(__file__), "livescreen", "livescreen.png")
+        destination_path = asksaveasfilename(defaultextension=".png")
+        if destination_path == "":
             return
+        shutil.copyfile(source_path, destination_path)
 
-        types = [('Portable Network Graphics', '*.png'), ('All Files', '*.*')]
-        img_file = asksaveasfile(mode='wb', filetypes=types, defaultextension='*.png')
-        if img_file == None:
-            return
-        img_file.write(self.frame)
 
 

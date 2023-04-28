@@ -17,9 +17,7 @@ from requests import HTTPError
 
 # If modifying these scopes, delete the file token.json.
 SCOPES = [
-    "https://www.googleapis.com/auth/gmail.send",
-    "https://www.googleapis.com/auth/gmail.modify",
-    'https://www.googleapis.com/auth/gmail.readonly',
+    "https://mail.google.com/"
 ]
 
 def authorization():
@@ -39,21 +37,10 @@ def authorization():
         with open('token.json', 'w') as token:
             token.write(creds.to_json())
 def send_mail(package):
+    creds = None
     if os.path.exists('token.json'):
         creds = Credentials.from_authorized_user_file('token.json', SCOPES)
     # If there are no (valid) credentials available, let the user log in.
-    if not creds or not creds.valid:
-        if creds and creds.expired and creds.refresh_token:
-            creds.refresh(Request())
-        else:
-            path = os.path.abspath('credentials.json')
-            flow = InstalledAppFlow.from_client_secrets_file(
-                path, SCOPES)
-            creds = flow.run_local_server(port=0)
-        # Save the credentials for the next runserver\credentials.json
-        with open('token.json', 'w') as token:
-            token.write(creds.to_json())
-
     service = build('gmail', 'v1', credentials=creds)
     message_body = '{}'.format(package)  # sử dụng phương thức format() để thêm giá trị vào nội dung email
     message = MIMEText(message_body)
@@ -72,23 +59,9 @@ def read_mail():
     Lists the user's Gmail labels.
     """
     creds = None
-    # The file token.json stores the user's access and refresh tokens, and is
-    # created automatically when the authorization flow completes for the first
-    # time.
+
     if os.path.exists('token.json'):
         creds = Credentials.from_authorized_user_file('token.json', SCOPES)
-    # If there are no (valid) credentials available, let the user log in.
-    if not creds or not creds.valid:
-        if creds and creds.expired and creds.refresh_token:
-            creds.refresh(Request())
-        else:
-            path = os.path.abspath('credentials.json')
-            flow = InstalledAppFlow.from_client_secrets_file(
-                path, SCOPES)
-            creds = flow.run_local_server(port=0)
-        # Save the credentials for the next runserver\credentials.json
-        with open('token.json', 'w') as token:
-            token.write(creds.to_json())
 
     try:
         # Call the Gmail API
@@ -120,29 +93,17 @@ def read_mail():
 def get_info_message(message):
     # Parse the raw message.
     mime_msg = email.message_from_bytes(base64.urlsafe_b64decode(message['raw']))
-
-    # print('from', mime_msg['from'])
-    # print('to', mime_msg['to'])
-    # print('subject', mime_msg['subject'])
-    # print("----------------------------------------------------")
     t = ""
     message_main_type = mime_msg.get_content_maintype()
     if message_main_type == 'multipart':
         for part in mime_msg.get_payload():
             if part.get_content_maintype() == 'text':
-                # print(1)
                 t = part.get_payload()
-                # print(part.get_payload())
     elif message_main_type == 'text':
-        # print(2)
         t = mime_msg.get_payload()
-        # print(mime_msg.get_payload())
     print("\n",t)
     return t
-    # print("----------------------------------------------------\n\n\n")
 
-        # Message snippet only.
-        # print('Message snippet: %s' % message['snippet'])
 
 def mark_as_read(service, m):
     service.users().messages().modify(userId='me', id=m['id'], body={'removeLabelIds': ['UNREAD']}).execute()
@@ -153,6 +114,71 @@ def split_messages(letter):
     data = tmp[1]
     return cmd, data
 
+def get_msg_with_attachment():
+    creds = None
+
+    # time.
+    if os.path.exists('token.json'):
+        creds = Credentials.from_authorized_user_file('token.json', SCOPES)
+    
+    try:
+        # Call the Gmail API
+        service = build('gmail', 'v1', credentials=creds)
+        # query list message with subject client and not read
+        results = service.users().messages().list(userId='me', q='is:unread subject:server').execute()
+        # results = service.users().messages().list(userId='me').execute()
+        mes = results.get('messages', [])
+        mes.reverse() #oldest
+        if not mes:
+            print("No letter find out")
+            return "no"
+        else:
+            for m in mes:
+                message = service.users().messages().get(userId='me', id=m['id'], format="raw").execute()
+
+                res = get_info_message(message)
+                if "LIVESCREEN" in res:
+                    message = service.users().messages().get(userId='me', id=m['id']).execute()
+                    for part in message['payload']['parts']:
+                        if(part['filename'] and part['body'] and part['body']['attachmentId']):
+                            attachment = service.users().messages().attachments().get(id=part['body']['attachmentId'], userId='me', messageId=m['id']).execute()
+
+                            file_data = base64.urlsafe_b64decode(attachment['data'].encode('utf-8'))
+                            current_path = os.path.dirname(__file__)
+                            path = f"{current_path}/livescreen/{part['filename']}"
+                            
+                            f = open(path, 'wb')
+                            f.write(file_data)
+                            f.close()
+                    #xoá thư
+                    service.users().messages().delete(userId='me', id=m['id']).execute()
+                return res
+
+    except HttpError as error:
+        # TODO(developer) - Handle errors from gmail API.
+        print(f'An error occurred: {error}')
+
+def clear_all_msg():
+    creds = None
+    if os.path.exists('token.json'):
+        creds = Credentials.from_authorized_user_file('token.json', SCOPES)
+    try:
+        # Call the Gmail API
+        service = build('gmail', 'v1', credentials=creds)
+        # query list message with subject client and not read
+        results = service.users().messages().list(userId='me').execute()
+        # results = service.users().messages().list(userId='me').execute()
+        mes = results.get('messages', [])
+        if not mes:
+            print("No letter find out to delete")
+        else:
+            for m in mes:
+                service.users().messages().delete(userId='me', id=m['id']).execute()
+            print("delete all")
+
+    except HttpError as error:
+        # TODO(developer) - Handle errors from gmail API.
+        print(f'An error occurred: {error}')
 # https://skillshats.com/blogs/send-and-read-emails-with-gmail-api/ link có hết
 #https://www.youtube.com/watch?v=HNtPG5ltFf8
 #https://developers.google.com/gmail/api/guides/labels

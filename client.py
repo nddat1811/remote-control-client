@@ -33,11 +33,13 @@ def disconnect():
     return
 # 1 Xem địa chỉ MAC (MAC Address)
 def mac_address():
+    g.clear_all_msg()
     g.send_mail("MAC")
     mac.mac_address()
     return
 # 2 Lắng nghe phím (Keylogger)
 def keylogger():
+    g.clear_all_msg()
     g.send_mail("KEYLOG")
     tmp = klc.Keylogger_UI(root)
     tmp.button_6.configure(command = lambda: back(tmp))
@@ -50,19 +52,22 @@ def back_directory_tree(ui):
     g.send_mail("QUIT")
 
 def directory_tree():
+    g.clear_all_msg()
     g.send_mail("DIRECTORY")
     tmp = dt.DirectoryTree_UI(root)
     tmp.button_6.configure(command = lambda: back_directory_tree(tmp))
     return
 # 4 Xem màn hình trực tiếp (Live Screen)
-# def live_screen():
-#     client.sendall(bytes("LIVESCREEN", "utf8"))
-#     tmp = lsc.Desktop_UI(root, client)
-#     if tmp.status == False:
-#         back(tmp)
-#     return
+def live_screen():
+    g.clear_all_msg()
+    g.send_mail("LIVESCREEN")
+    tmp = lsc.Desktop_UI(root)
+    if tmp.status == False:
+        back(tmp)
+    return
 # 5	Xem ứng dụng hoặc tiến trình (Application/Process)
 def app_process():
+    g.clear_all_msg()
     g.send_mail("APP_PRO")
     tmp = ap.App_Process_UI(root)
     tmp.button_6.configure(command = lambda: back(tmp))
@@ -73,12 +78,14 @@ def back_reg(ui):
     f2.place(x = 0, y = 0)
 
 def registry():
+    g.clear_all_msg()
     g.send_mail("REGISTRY")
     tmp = rc.Registry_UI(root)
     tmp.btn_back.configure(command=lambda: back_reg(tmp))
     return
 # # 7 Tắt máy hoặc thoát khỏi màn hình desktop (Shutdown/Logout)
 def shutdown_logout():
+    g.clear_all_msg()
     g.send_mail("SD_LO")
     sl.shutdown_logout(root)
     return
@@ -90,7 +97,7 @@ def show_main_ui():
     f2.button_mac_addr.configure(command = mac_address)
     f2.button_keylogger.configure(command = keylogger)
     f2.button_directory_tree.configure(command = directory_tree)
-    # f2.button_livescreen.configure(command = live_screen)
+    f2.button_livescreen.configure(command = live_screen)
     f2.button_app_process.configure(command = app_process)    
     f2.button_registry.configure(command = registry)    
     f2.button_shudown_logout.configure(command = shutdown_logout)
