@@ -59,7 +59,7 @@ class Desktop_UI(Canvas):
     # display frames continously
     def ChangeImage(self):
         while self.status:  
-            letter = g.get_msg_with_attachment()
+            letter = g.get_mail_with_attachment("no")
             if letter is not None and "LIVESCREEN" in letter:
                 path = os.path.join(os.path.dirname(__file__), "livescreen", "livescreen.png")
                 img_PIL = Image.open(path).resize((960, 540), Image.ANTIALIAS)

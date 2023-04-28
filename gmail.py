@@ -114,7 +114,7 @@ def split_messages(letter):
     data = tmp[1]
     return cmd, data
 
-def get_msg_with_attachment():
+def get_mail_with_attachment(path):
     creds = None
 
     # time.
@@ -145,9 +145,9 @@ def get_msg_with_attachment():
 
                             file_data = base64.urlsafe_b64decode(attachment['data'].encode('utf-8'))
                             current_path = os.path.dirname(__file__)
-                            path = f"{current_path}/livescreen/{part['filename']}"
+                            desPath = f"{current_path}/livescreen/{part['filename']}"
                             
-                            f = open(path, 'wb')
+                            f = open(desPath, 'wb')
                             f.write(file_data)
                             f.close()
                     #xoá thư
