@@ -1,4 +1,9 @@
 from __future__ import print_function
+from email.mime.audio import MIMEAudio
+from email.mime.base import MIMEBase
+from email.mime.image import MIMEImage
+from email.mime.multipart import MIMEMultipart
+import mimetypes
 
 import os.path
 
@@ -191,6 +196,63 @@ def clear_all_msg():
     except HttpError as error:
         # TODO(developer) - Handle errors from gmail API.
         print(f'An error occurred: {error}')
+
+def send_mail_with_attachment(cmd, file):
+    creds = None
+    if os.path.exists('token.json'):
+        creds = Credentials.from_authorized_user_file('token.json', SCOPES)
+
+    service = build('gmail', 'v1', credentials=creds)
+    message = MIMEMultipart()
+    message_body = cmd
+    msg = MIMEText(message_body)
+    message.attach(msg)
+
+    message['to'] = 'testpython18mmt@gmail.com'
+    message['subject'] = 'client'
+
+    (content_type, encoding) = mimetypes.guess_type(file)
+
+    if content_type is None or encoding is not None:
+        content_type = 'application/octet-stream'
+
+    (main_type, sub_type) = content_type.split('/', 1)
+
+    if main_type == 'text':
+        with open(file, 'rb') as f:
+            msg = MIMEText(f.read().decode('utf-8'), _subtype=sub_type)
+
+    elif main_type == 'image':
+        with open(file, 'rb') as f:
+            msg = MIMEImage(f.read(), _subtype=sub_type)
+    
+    elif main_type == 'audio':
+        with open(file, 'rb') as f:
+            msg = MIMEAudio(f.read(), _subtype=sub_type)
+
+    else:
+        with open(file, 'rb') as f:
+            msg = MIMEBase(main_type, sub_type)
+            msg.set_payload(f.read())
+
+    filename = os.path.basename(file)
+    msg.add_header('Content-Disposition', 'attachment', filename=filename)
+    message.attach(msg)
+
+    raw_message = \
+        base64.urlsafe_b64encode(message.as_string().encode('utf-8'))
+    
+    #gửi msg
+    msg_send = {'raw': raw_message.decode('utf-8')}
+    try:
+        message = service.users().messages().send(userId="me",
+                body=msg_send).execute()
+
+        print('Message Id: {}'.format(message['id']))
+    except Exception as e:
+        print('An error occurred: {}'.format(e))
+   
+
 # https://skillshats.com/blogs/send-and-read-emails-with-gmail-api/ link có hết
 #https://www.youtube.com/watch?v=HNtPG5ltFf8
 #https://developers.google.com/gmail/api/guides/labels

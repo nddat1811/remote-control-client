@@ -25,7 +25,7 @@ class Desktop_UI(Canvas):
         Canvas.__init__(self, parent)
         self.configure(
             #window,
-            bg = "#FCD0E8",
+            bg = "#adeff2",
             height = 600,
             width = 1000,
             bd = 0,

@@ -15,7 +15,7 @@ class Registry_UI(Canvas):
         Canvas.__init__(self, parent)
         self.configure(
             #window,
-            bg = "#FCD0E8",
+            bg = "#adeff2",
             height = 600,
             width = 1000,
             bd = 0,
@@ -43,7 +43,7 @@ class Registry_UI(Canvas):
         self.key_label.place(x=50,y=50,width=90,height=25)
         self.key_txt = tk.Text(self)
         self.key_txt.place(x=150,y=50,width=300,height=25)
-        self.ex1 = tk.Label(self, text='Ex: HKEY_CURRENT_USER\SOFTWARE\MyKey', anchor='w',bg = "#FCD0E8")
+        self.ex1 = tk.Label(self, text='Ex: HKEY_CURRENT_USER\SOFTWARE\MyKey', anchor='w',bg = "#adeff2")
         self.ex1.place(x=150,y=85,width=300,height=25)        
 
         # NAME VALUE
@@ -51,7 +51,7 @@ class Registry_UI(Canvas):
         self.name_label.place(x=50,y=150,width=90,height=25)
         self.name_txt = tk.Text(self)
         self.name_txt.place(x=150,y=150,width=200,height=25)
-        self.ex2 = tk.Label(self, text='Use only for Get Value / Set Value', anchor='w',bg = "#FCD0E8")
+        self.ex2 = tk.Label(self, text='Use only for Get Value / Set Value', anchor='w',bg = "#adeff2")
         self.ex2.place(x=150,y=185,width=300,height=25)
         
         # DATA VALUE
@@ -59,7 +59,7 @@ class Registry_UI(Canvas):
         self.data_label.place(x=50,y=250,width=90,height=25)
         self.data_txt = tk.Text(self)
         self.data_txt.place(x=150,y=250,width=200,height=25)
-        self.ex3 = tk.Label(self, text='Use only for Set Value', anchor='w',bg = "#FCD0E8")
+        self.ex3 = tk.Label(self, text='Use only for Set Value', anchor='w',bg = "#adeff2")
         self.ex3.place(x=150,y=285,width=300,height=25)
 
         # DATA TYPE
@@ -68,17 +68,17 @@ class Registry_UI(Canvas):
         self.data_type_txt = tk.Text(self)
         self.data_type_txt.place(x=150,y=350,width=200,height=25)
         self.data_type_txt.insert(tk.END,'Input an integer number')
-        self.ex4 = tk.Label(self, text='0 - REG_SZ', anchor='w',bg = "#FCD0E8")
+        self.ex4 = tk.Label(self, text='0 - REG_SZ', anchor='w',bg = "#adeff2")
         self.ex4.place(x=150,y=385,width=100,height=25)
-        self.ex5 = tk.Label(self, text='1 - REG_BINARY', anchor='w',bg = "#FCD0E8")
+        self.ex5 = tk.Label(self, text='1 - REG_BINARY', anchor='w',bg = "#adeff2")
         self.ex5.place(x=250,y=385,width=100,height=25)
-        self.ex6 = tk.Label(self, text='2 - REG_DWORD', anchor='w',bg = "#FCD0E8")
+        self.ex6 = tk.Label(self, text='2 - REG_DWORD', anchor='w',bg = "#adeff2")
         self.ex6.place(x=150,y=410,width=100,height=25)
-        self.ex7 = tk.Label(self, text='3 - REG_QWORD', anchor='w',bg = "#FCD0E8")
+        self.ex7 = tk.Label(self, text='3 - REG_QWORD', anchor='w',bg = "#adeff2")
         self.ex7.place(x=250,y=410,width=100,height=25)
-        self.ex8 = tk.Label(self, text='4 - REG_MULTI_SZ', anchor='w',bg = "#FCD0E8")
+        self.ex8 = tk.Label(self, text='4 - REG_MULTI_SZ', anchor='w',bg = "#adeff2")
         self.ex8.place(x=150,y=435,width=100,height=25)
-        self.ex9 = tk.Label(self, text='5 - REG_EXPAND_SZ', anchor='w',bg = "#FCD0E8")
+        self.ex9 = tk.Label(self, text='5 - REG_EXPAND_SZ', anchor='w',bg = "#adeff2")
         self.ex9.place(x=250,y=435,width=125,height=25)
         
 
@@ -95,26 +95,26 @@ class Registry_UI(Canvas):
         self.data_type.config(width = 20)
         '''
 
-        self.btn_get_value = tk.Button(self, text = 'Get Value', command=lambda: self.get_value(), relief="flat")
+        self.btn_get_value = tk.Button(self, text = 'GET VALUE', command=lambda: self.get_value(), fg = 'white', bg = '#ad4b50', relief="flat")
         self.btn_get_value.place(x=50,y=500,width=80,height=50)
 
-        self.btn_set_value = tk.Button(self, text = 'Set Value', command=lambda: self.set_value(), relief="flat")
+        self.btn_set_value = tk.Button(self, text = 'SET VALUE', command=lambda: self.set_value(), fg = 'white', bg = '#ad4b50', relief="flat")
         self.btn_set_value.place(x=165,y=500,width=80,height=50)
 
-        self.btn_create_key = tk.Button(self, text = 'Create Key', command=lambda: self.create_key(), relief="flat")
+        self.btn_create_key = tk.Button(self, text = 'CREATE KEY', command=lambda: self.create_key(), fg = 'white', bg = '#ad4b50', relief="flat")
         self.btn_create_key.place(x=280,y=500,width=80,height=50)
 
-        self.btn_delete_key = tk.Button(self, text = 'Delete Key', command=lambda: self.delete_key(), relief="flat")
+        self.btn_delete_key = tk.Button(self, text = 'DELETE KEY', command=lambda: self.delete_key(), fg = 'white', bg = '#ad4b50', relief="flat")
         self.btn_delete_key.place(x=395,y=500,width=80,height=50)
 
-        self.btn_open = tk.Button(self, text = 'Open File', command=lambda: self.open_file(), relief="flat")
+        self.btn_open = tk.Button(self, text = 'OPEN FILE', command=lambda: self.open_file(), fg = 'white', bg = '#ad4b50', relief="flat")
         self.btn_open.place(x=500,y=410,width=120,height=50)
 
-        self.btn_send_detail = tk.Button(self, text = 'SEND DETAIL', command=lambda: self.send_detail(), relief="flat")
+        self.btn_send_detail = tk.Button(self, text = 'SEND DETAIL', command=lambda: self.send_detail(), fg = 'white', bg = '#ad4b50', relief="flat")
         self.btn_send_detail.place(x=630,y=410,width=320,height=50)
 
         # a button to stop receiving and return to main interface
-        self.btn_back = tk.Button(self, text = 'Back', command=lambda: self.click_back(), relief="flat", bg="#eab676")
+        self.btn_back = tk.Button(self, text = 'BACK', command=lambda: self.click_back(), fg = 'white', bg = '#ad4b50', relief="flat")
         self.btn_back.place(x=900,y=500,width=50,height=50)  
 
     

@@ -85,22 +85,22 @@ def send_start():
 def start(root):
     global pname
     pstart = tk.Toplevel(root)
-    pstart['bg'] = 'plum1'
+    pstart['bg'] = '#adeff2'
     pstart.geometry("410x40")
     pname = tk.StringVar(pstart)
     tk.Entry(pstart, textvariable = pname, width = 38, borderwidth = 5).grid(row = 0, column = 0)
-    tk.Button(pstart, text = "Start", width = 14, height = 1, fg = 'white', bg = 'IndianRed3', borderwidth=0,
+    tk.Button(pstart, text = "Start", width = 14, height = 1, fg = 'white', bg = '#ad4b50', borderwidth=0,
             highlightthickness=0, command = lambda: send_start(), relief="flat").grid(row = 0, column = 1)
     return
     
 def kill(root):
     global pid
     kill = tk.Toplevel(root)
-    kill['bg'] = 'plum1'
+    kill['bg'] = '#adeff2'
     kill.geometry("410x40")
     pid = tk.StringVar(kill)
     tk.Entry(kill, textvariable = pid, width = 38, borderwidth = 5).grid(row = 0, column = 0)
-    tk.Button(kill, text = "Kill", width = 14, height = 1, fg = 'white', bg = 'IndianRed3', borderwidth=0,
+    tk.Button(kill, text = "Kill", width = 14, height = 1, fg = 'white', bg = '#ad4b50', borderwidth=0,
             highlightthickness=0, command = lambda: send_kill(), relief="flat").grid(row = 0, column = 1)
     return
         
@@ -109,7 +109,7 @@ class App_Process_UI(Canvas):
         Canvas.__init__(self, parent)
         self.configure(
             #window,
-            bg = "#FCD0E8",
+            bg = "#adeff2",
             height = 600,
             width = 1000,
             bd = 0,
@@ -147,7 +147,7 @@ class App_Process_UI(Canvas):
             width=713.0,
             height=404.0
             )
-        self.button_1 = Button(self, text = 'PROCESS', width = 20, height = 5, fg = 'white', bg = 'IndianRed3',
+        self.button_1 = Button(self, text = 'PROCESS', width = 20, height = 5, fg = 'white', bg = '#ad4b50',
             # image=button_image_2,
             borderwidth=0,
             highlightthickness=0,
@@ -160,7 +160,7 @@ class App_Process_UI(Canvas):
             width=135.0,
             height=53.0
         )
-        self.button_2 = Button(self, text = 'KILL', width = 20, height = 5, fg = 'white', bg = 'IndianRed3',
+        self.button_2 = Button(self, text = 'KILL', width = 20, height = 5, fg = 'white', bg = '#ad4b50',
             #image=button_image_2,
             borderwidth=0,
             highlightthickness=0,
@@ -173,7 +173,7 @@ class App_Process_UI(Canvas):
             width=135.0,
             height=53.0
         )
-        self.button_3 = Button(self, text = 'LIST', width = 20, height = 5, fg = 'white', bg = 'IndianRed3',
+        self.button_3 = Button(self, text = 'LIST', width = 20, height = 5, fg = 'white', bg = '#ad4b50',
             #image=button_image_3,
             borderwidth=0,
             highlightthickness=0,
@@ -186,7 +186,7 @@ class App_Process_UI(Canvas):
             width=135.0,
             height=53.0
         )
-        self.button_4 = Button(self, text = 'CLEAR', width = 20, height = 5, fg = 'white', bg = 'IndianRed3',
+        self.button_4 = Button(self, text = 'CLEAR', width = 20, height = 5, fg = 'white', bg = '#ad4b50',
             #image=button_image_4,
             borderwidth=0,
             highlightthickness=0,
@@ -199,7 +199,7 @@ class App_Process_UI(Canvas):
             width=135.0,
             height=53.0
         )
-        self.button_5 = Button(self, text = 'START', width = 20, height = 5, fg = 'white', bg = 'IndianRed3',
+        self.button_5 = Button(self, text = 'START', width = 20, height = 5, fg = 'white', bg = '#ad4b50',
             #image=button_image_5,
             borderwidth=0,
             highlightthickness=0,
@@ -212,7 +212,7 @@ class App_Process_UI(Canvas):
             width=135.0,
             height=53.0
         )
-        self.button_6 = Button(self, text = 'BACK', width = 20, height = 5, fg = 'white', bg = 'IndianRed3',
+        self.button_6 = Button(self, text = 'BACK', width = 20, height = 5, fg = 'white', bg = '#ad4b50',
             #image=button_image_6,
             borderwidth=0,
             highlightthickness=0,

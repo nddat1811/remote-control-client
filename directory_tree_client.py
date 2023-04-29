@@ -42,7 +42,7 @@ class DirectoryTree_UI(Canvas):
 
         self.configure(
             #window,
-            bg = "#FCD0E8",
+            bg = "#adeff2",
             height = 600,
             width = 1000,
             bd = 0,
@@ -88,7 +88,7 @@ class DirectoryTree_UI(Canvas):
         self.label2.pack(fill = tk.X)
         self.path = Text(self.frame, height = 1, width = 26, state = "disable")
         self.path.pack(fill = tk.X)
-        self.button_2 = Button(self, text = 'SHOW', width = 20, height = 5, fg = 'white', bg = 'IndianRed3',
+        self.button_2 = Button(self, text = 'SHOW', width = 20, height = 5, fg = 'white', bg = '#ad4b50',
             #image=button_image_2,
             borderwidth=0,
             highlightthickness=0,
@@ -101,7 +101,7 @@ class DirectoryTree_UI(Canvas):
             width = 135.0,
             height = 53.0
         )
-        self.button_3 = Button(self, text = 'SEND FILE TO FOLDER', width = 20, height = 5, fg = 'white', bg = 'IndianRed3',
+        self.button_3 = Button(self, text = 'SEND FILE TO FOLDER', width = 20, height = 5, fg = 'white', bg = '#ad4b50',
             #image=button_image_3,
             borderwidth=0,
             highlightthickness=0,
@@ -114,7 +114,7 @@ class DirectoryTree_UI(Canvas):
             width = 135.0,
             height = 53.0
         )
-        self.button_4 = Button(self, text = 'COPY THIS FILE', width = 20, height = 5, fg = 'white', bg = 'IndianRed3',
+        self.button_4 = Button(self, text = 'COPY THIS FILE', width = 20, height = 5, fg = 'white', bg = '#ad4b50',
             #image=button_image_4,
             borderwidth = 0,
             highlightthickness = 0,
@@ -127,7 +127,7 @@ class DirectoryTree_UI(Canvas):
             width=135.0,
             height=53.0
         )
-        self.button_5 = Button(self, text = 'DELETE', width = 20, height = 5, fg = 'white', bg = 'IndianRed3',
+        self.button_5 = Button(self, text = 'DELETE', width = 20, height = 5, fg = 'white', bg = '#ad4b50',
             #image=button_image_5,
             borderwidth=0,
             highlightthickness=0,
@@ -140,7 +140,7 @@ class DirectoryTree_UI(Canvas):
             width = 135.0,
             height = 53.0
         )
-        self.button_6 = Button(self, text = 'BACK', width = 20, height = 5, fg = 'white', bg = 'IndianRed3',
+        self.button_6 = Button(self, text = 'BACK', width = 20, height = 5, fg = 'white', bg = '#ad4b50',
             #image=button_image_6,
             borderwidth = 0,
             highlightthickness = 0,
@@ -212,32 +212,33 @@ class DirectoryTree_UI(Canvas):
 
     # copy file from client to server
     def copy_file_to_server(self):
-        self.client.sendall("COPYTO".encode())
-        isOk = self.client.recv(BUFSIZE).decode()
-        if (isOk == "OK"):
-            filename = filedialog.askopenfilename(title="Select File", 
+        g.send_mail("COPYTO")
+        while True:
+            isOk = g.read_mail()
+            if "OK" in isOk:
+                filename = filedialog.askopenfilename(title="Select File", 
                                                 filetypes=[("All Files", "*.*")])
-            if filename == None or filename == "":
-                self.client.sendall("-1".encode())
-                temp = self.client.recv(BUFSIZE)
-                return 
-            destPath = self.currPath + "\\"
-            filesize = os.path.getsize(filename)
-            self.client.send(f"{filename}{SEPARATOR}{filesize}{SEPARATOR}{destPath}".encode())
-            isReceived = self.client.recv(BUFSIZE).decode()
-            if (isReceived == "received filename"):
-                try:
-                    with open(filename, "rb") as f:
-                        data = f.read()
-                        self.client.sendall(data)
-                except:
-                    self.client.sendall("-1".encode())
-                isReceivedContent = self.client.recv(BUFSIZE).decode()
-                if (isReceivedContent == "received content"):
-                    messagebox.showinfo(message = "Copy successfully!")
-                    return True
-        messagebox.showerror(message = "Cannot copy!")    
-        return False
+                if filename == None or filename == "":
+                    g.send_mail("NOTFILE")
+                    return 
+                destPath = self.currPath + "\\"
+                g.send_mail("FILE_PATH:"+ destPath) 
+                while True:
+                    r = g.read_mail()
+                    if "OK" in r:
+                        g.send_mail_with_attachment("FILECLIENT", filename)
+                        print("zozoz")
+                        break
+                
+                # filesize = os.path.getsize(filename)
+                while True:
+                    res = g.read_mail()
+                    if "ERROR" in res:
+                        messagebox.showerror(message = "Cannot copy!")
+                        return
+                    elif "OK" in res:
+                        messagebox.showinfo(message = "Copy successfully!")
+                        return
 
     # copy file from server to client
     def copy_file_to_client(self):
@@ -248,6 +249,7 @@ class DirectoryTree_UI(Canvas):
                 try:
                     destPath = filedialog.askdirectory()
                     if destPath == None or destPath == "":
+                        g.send_mail("NOTFILE")
                         return 
                     g.send_mail("FILENAME:" + self.currPath)
                     filename = os.path.basename(self.currPath)
@@ -264,8 +266,7 @@ class DirectoryTree_UI(Canvas):
                     return  
             elif "error" in isOk:
                 messagebox.showerror(message = "Cannot copy!")  
-                return  
-
+                return
 
     def delete_file(self):
         g.send_mail("XOAFILE")

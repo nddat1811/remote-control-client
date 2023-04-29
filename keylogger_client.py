@@ -62,7 +62,7 @@ class Keylogger_UI(Canvas):
         Canvas.__init__(self, parent)
         self.configure(
             #window,
-            bg = "#FCD0E8",
+            bg = "#adeff2",
             height = 600,
             width = 1000,
             bd = 0,
@@ -90,7 +90,7 @@ class Keylogger_UI(Canvas):
             width=713.0,
             height=404.0
         )
-        self.button_2 = Button(self, text = 'HOOK', width = 20, height = 5, fg = 'white', bg = 'IndianRed3',
+        self.button_2 = Button(self, text = 'HOOK', width = 20, height = 5, fg = 'white', bg = '#ad4b50',
             #image=button_image_2,
             borderwidth=0,
             highlightthickness=0,
@@ -103,7 +103,7 @@ class Keylogger_UI(Canvas):
             width=135.0,
             height=53.0
         )
-        self.button_3 = Button(self, text = 'PRINT', width = 20, height = 5, fg = 'white', bg = 'IndianRed3',
+        self.button_3 = Button(self, text = 'PRINT', width = 20, height = 5, fg = 'white', bg = '#ad4b50',
             #image=button_image_3,
             borderwidth=0,
             highlightthickness=0,
@@ -116,7 +116,7 @@ class Keylogger_UI(Canvas):
             width=135.0,
             height=53.0
         )
-        self.button_4 = Button(self, text = 'DELETE', width = 20, height = 5, fg = 'white', bg = 'IndianRed3',
+        self.button_4 = Button(self, text = 'DELETE', width = 20, height = 5, fg = 'white', bg = '#ad4b50',
             #image=button_image_4,
             borderwidth=0,
             highlightthickness=0,
@@ -129,7 +129,7 @@ class Keylogger_UI(Canvas):
             width=135.0,
             height=53.0
         )
-        self.button_5 = Button(self, text = 'LOCK', width = 20, height = 5, fg = 'white', bg = 'IndianRed3',
+        self.button_5 = Button(self, text = 'LOCK', width = 20, height = 5, fg = 'white', bg = '#ad4b50',
             #image=button_image_5,
             borderwidth=0,
             highlightthickness=0,
@@ -142,7 +142,7 @@ class Keylogger_UI(Canvas):
             width=135.0,
             height=53.0
         )
-        self.button_6 = Button(self, text = 'BACK', width = 20, height = 5, fg = 'white', bg = 'IndianRed3',
+        self.button_6 = Button(self, text = 'BACK', width = 20, height = 5, fg = 'white', bg = '#ad4b50',
             #image=button_image_6,
             borderwidth=0,
             highlightthickness=0,

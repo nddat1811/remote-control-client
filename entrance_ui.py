@@ -29,21 +29,21 @@ class Entrance_UI(Canvas):
         
         self.place(x = 0, y = 0)
         # set input ip
-        self.input = tk.StringVar(self)
-        self.entry_1 = Entry(self,
-            textvariable = self.input,
-            bd = 0,
-            bg = "#C4C4C4",
-            highlightthickness = 0
-        )
-        self.myFont = font.Font(family = 'Helvetica', size = 20)
-        self.entry_1['font'] = self.myFont
-        self.entry_1.place(
-            x = 552.0,
-            y = 300.5,
-            width = 320.0,
-            height = 58.0
-        )
+        # self.input = tk.StringVar(self)
+        # self.entry_1 = Entry(self,
+        #     textvariable = self.input,
+        #     bd = 0,
+        #     bg = "#C4C4C4",
+        #     highlightthickness = 0
+        # )
+        # self.myFont = font.Font(family = 'Helvetica', size = 20)
+        # self.entry_1['font'] = self.myFont
+        # self.entry_1.place(
+        #     x = 552.0,
+        #     y = 300.5,
+        #     width = 320.0,
+        #     height = 58.0
+        # )
         
         self.button_image_connect = PhotoImage(
             file = abs_path("button_connect.png"))
