@@ -104,6 +104,7 @@ def get_info_message(message):
         for part in mime_msg.get_payload():
             if part.get_content_maintype() == 'text':
                 t = part.get_payload()
+                return t
     elif message_main_type == 'text':
         t = mime_msg.get_payload()
     # print("\n",t)
@@ -220,7 +221,7 @@ def send_mail_with_attachment(cmd, file):
 
     if main_type == 'text':
         with open(file, 'rb') as f:
-            msg = MIMEText(f.read().decode('utf-8'), _subtype=sub_type)
+            attachment = MIMEText(f.read().decode('utf-8'), _subtype=sub_type)
 
     elif main_type == 'image':
         with open(file, 'rb') as f:
@@ -236,8 +237,14 @@ def send_mail_with_attachment(cmd, file):
             msg.set_payload(f.read())
 
     filename = os.path.basename(file)
-    msg.add_header('Content-Disposition', 'attachment', filename=filename)
-    message.attach(msg)
+    print("name: ", filename)
+    if main_type == 'text':
+        message.attach(attachment)
+        attachment.add_header('Content-Disposition', 'attachment', filename=filename)
+
+    else:
+        msg.add_header('Content-Disposition', 'attachment', filename=filename)
+        message.attach(msg)
 
     raw_message = \
         base64.urlsafe_b64encode(message.as_string().encode('utf-8'))

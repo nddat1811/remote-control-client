@@ -227,7 +227,6 @@ class DirectoryTree_UI(Canvas):
                     r = g.read_mail()
                     if "OK" in r:
                         g.send_mail_with_attachment("FILECLIENT", filename)
-                        print("zozoz")
                         break
                 
                 # filesize = os.path.getsize(filename)

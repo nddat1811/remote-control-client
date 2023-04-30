@@ -27,7 +27,6 @@ def hook(btn):
     
 def _print( textbox):
     g.send_mail("PRINT")
-    print("  ")
     while True:
         letter = g.read_mail()
         if letter != "no":
