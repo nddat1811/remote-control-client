@@ -90,6 +90,11 @@ def shutdown_logout():
     sl.shutdown_logout(root)
     return
 
+def disconnect():
+    f2.place_forget()
+    f1.place(x = 0, y = 0)
+    g.send_mail("QUIT")
+    return
 def show_main_ui():
     f1.place_forget()
     global f2
@@ -101,19 +106,13 @@ def show_main_ui():
     f2.button_app_process.configure(command = app_process)    
     f2.button_registry.configure(command = registry)    
     f2.button_shudown_logout.configure(command = shutdown_logout)
-    # f2.button_disconnect.configure(command = disconnect)
+    f2.button_disconnect.configure(command = disconnect)
     return
 
 
 def connect():
     g.authorization()
-    show_main_ui()
-    # try:
-    #     tk.messagebox.showinfo(message = "Connect successfully!")
-    #     show_main_ui()
-    # except:
-    #     tk.messagebox.showerror(message = "Cannot connect!")       
+    show_main_ui()   
     return
-# show_main_ui()
 f1.button_connect.configure(command = connect)
 root.mainloop()
